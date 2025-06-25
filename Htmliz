@@ -1,0 +1,8 @@
+<div id="diviniciar" class="active">
+  <button onclick="iniciarjogo()">Iniciar Jogo</button>
+</div>
+
+<div id="areajogo" class="">
+  <h2 id="titulopergunta"></h2>
+  <div id="areaperguntas"></div>
+</div>
