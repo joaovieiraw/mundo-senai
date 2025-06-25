@@ -1,0 +1,96 @@
+
+const diviniciar = document.getElementById("diviniciar");
+const divareajogo = document.getElementById("areajogo");
+const titulodapergunta = document.getElementById("titulopergunta");
+const areaperguntas = document.getElementById("areaperguntas");
+const btnProxima = document.getElementById("btnProxima");
+
+let respostascorreta = 0;
+let indiceperguntas = 0;
+let perguntaRespondida = false;
+
+const perguntas = [
+  { pergunta:"Qual é o maior deserto do mundo?", opcoes:["Saara","Antartida","Atacâma"], correta:"Antartida" },
+  { pergunta:"Qual é a capital do Brasil?", opcoes:["RJ","SP","Brasíla"], correta:"Brasíla" },
+  { pergunta:"Qual é a capital da Austrália?", opcoes:["Palhoça", "Urubici","Canguru"], correta:"Canguru" },
+  { pergunta:"Qual é o país com maior população no mundo?", opcoes:["China","Índia","Paraguai"], correta:"Índia" },
+  { pergunta:" Qual a linha imaginária que atravessa o Brasil?", opcoes:["Pandorga","Sonho","Equador"], correta:"Equador" },
+  { pergunta:"Qual o oceano que banha o Brasil?", opcoes:["Pacífico","Atlântico","Índico"], correta:"Atlântico" }
+];
+
+function iniciarjogo() {
+  diviniciar.classList.remove("active");
+  divareajogo.style.display = "block";
+  abrirareajogo();
+}
+
+function abrirareajogo() {
+  perguntaRespondida = false;
+  titulodapergunta.textContent = perguntas[indiceperguntas].pergunta;
+  areaperguntas.innerHTML = "";
+  btnProxima.style.display = "none";
+
+  perguntas[indiceperguntas].opcoes.forEach(opcao => {
+    const botao = document.createElement("button");
+    botao.textContent = opcao;
+    botao.classList.add("answer-btn");
+    botao.addEventListener("click", () => validarrespostacorreta(botao));
+    areaperguntas.appendChild(botao);
+  });
+}
+
+function validarrespostacorreta(botaoClicado) {
+  if (perguntaRespondida) return;
+  perguntaRespondida = true;
+
+  const botoesdaTela = document.querySelectorAll(".answer-btn");
+  const respostaCerta = perguntas[indiceperguntas].correta;
+
+  botoesdaTela.forEach(botao => {
+    botao.disabled = true;
+    if (botao.textContent === respostaCerta) {
+      botao.classList.add("correct");
+    }
+    if (botao === botaoClicado && botao.textContent !== respostaCerta) {
+      botao.classList.add("incorrect");
+    }
+  });
+
+  if (botaoClicado.textContent === respostaCerta) {
+    respostascorreta++;
+  }
+
+  btnProxima.style.display = "inline-block"; // Libera o botão de próxima pergunta
+}
+
+function proximapergunta() {
+  indiceperguntas++;
+  if (indiceperguntas < perguntas.length) {
+    abrirareajogo();
+  } else {
+    mostrarResultadoFinal();
+  }
+}
+
+function mostrarResultadoFinal() {
+  const total = perguntas.length;
+  const percentual = (respostascorreta / total) * 100;
+  let classificacao = "";
+
+  if (percentual === 100) {
+    classificacao = "Excelente!";
+  } else if (percentual >= 99) {
+    classificacao = "Muito bom!";
+  } else if (percentual >= 70) {
+    classificacao = "Regular!";
+  } else {
+    classificacao = "Precisa melhorar.";
+  }
+
+  divareajogo.innerHTML = `
+    <h2>Resultado Final</h2>
+    <p>Você acertou ${respostascorreta} de ${total} perguntas.</p>
+    <p>Desempenho: ${percentual.toFixed(0)}% - <strong>${classificacao}</strong></p>
+    <button onclick="window.location.reload()">Jogar Novamente</button>
+  `;
+}
